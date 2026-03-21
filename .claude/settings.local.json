@@ -3,7 +3,13 @@
     "allow": [
       "Bash(test:*)",
       "Bash(php artisan:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(find:*)",
+      "Bash(npm install)",
+      "Bash(npm run build:*)",
+      "Bash(taskkill:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)"
     ]
   }
 }

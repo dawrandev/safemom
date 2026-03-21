@@ -47,14 +47,8 @@ class StartCommand extends Command
         $telegramId = (string) $this->getUpdate()->getMessage()->getFrom()->getId();
         $firstName = $this->getUpdate()->getMessage()->getFrom()->getFirstName();
 
-        // Check if user is registered
-        if ($this->registrationService->isRegistered($telegramId)) {
-            // Show Web App button
-            $this->showWebAppButton($chatId, $firstName);
-        } else {
-            // Show registration button
-            $this->showRegistrationButton($chatId, $firstName);
-        }
+        // Show Web App button directly (no registration needed)
+        $this->showWebAppButton($chatId, $firstName);
     }
 
     /**
@@ -66,7 +60,14 @@ class StartCommand extends Command
      */
     protected function showWebAppButton($chatId, $firstName)
     {
-        $webAppUrl = env('TELEGRAM_WEB_APP_URL', 'https://your-webapp-url.com');
+        $webAppUrl = config('telegram.bots.mybot.web_app_url');
+
+        // If not configured, use default
+        if (!$webAppUrl) {
+            $webAppUrl = config('app.url') . '/telegram/webapp/dashboard';
+        }
+
+        \Log::info('Web App URL: ' . $webAppUrl);
 
         $keyboard = Keyboard::make([
             'inline_keyboard' => [

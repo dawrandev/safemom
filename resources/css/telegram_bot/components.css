@@ -1,0 +1,24 @@
+/* Utility Classes */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Pulse Ring Animation */
+.pulse-ring {
+    animation: pulse-ring 3s ease-in-out infinite;
+}
+
+/* Medication Checkbox */
+.med-check:checked + label .check-box {
+    background: rgb(167 139 250);
+    border-color: rgb(167 139 250);
+}
+
+.med-check:checked + label .check-box iconify-icon {
+    opacity: 1;
+}
