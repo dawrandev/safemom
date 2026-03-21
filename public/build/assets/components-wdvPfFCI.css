@@ -1,0 +1,1 @@
+.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}.pulse-ring{animation:pulse-ring 3s ease-in-out infinite}.med-check:checked+label .check-box{background:#a78bfa;border-color:#a78bfa}.med-check:checked+label .check-box iconify-icon{opacity:1}

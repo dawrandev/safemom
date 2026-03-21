@@ -1,0 +1,109 @@
+{
+  "_telegram-init-COMxwxKX.js": {
+    "file": "assets/telegram-init-COMxwxKX.js",
+    "name": "telegram-init"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-Dg86nB0Y.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/telegram_bot/base.css": {
+    "file": "assets/base-C9pQ5UJE.css",
+    "src": "resources/css/telegram_bot/base.css",
+    "isEntry": true
+  },
+  "resources/css/telegram_bot/community_support.css": {
+    "file": "assets/dashboard-tn0RQdqM.css",
+    "src": "resources/css/telegram_bot/dashboard.css",
+    "isEntry": true
+  },
+  "resources/css/telegram_bot/components.css": {
+    "file": "assets/components-wdvPfFCI.css",
+    "src": "resources/css/telegram_bot/components.css",
+    "isEntry": true
+  },
+  "resources/css/telegram_bot/dashboard.css": {
+    "file": "assets/dashboard-tn0RQdqM.css",
+    "src": "resources/css/telegram_bot/dashboard.css",
+    "isEntry": true
+  },
+  "resources/css/telegram_bot/health_trend.css": {
+    "file": "assets/dashboard-tn0RQdqM.css",
+    "src": "resources/css/telegram_bot/dashboard.css",
+    "isEntry": true
+  },
+  "resources/css/telegram_bot/monitoring.css": {
+    "file": "assets/dashboard-tn0RQdqM.css",
+    "src": "resources/css/telegram_bot/dashboard.css",
+    "isEntry": true
+  },
+  "resources/css/telegram_bot/vitals.css": {
+    "file": "assets/dashboard-tn0RQdqM.css",
+    "src": "resources/css/telegram_bot/dashboard.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-BuG9aa18.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/telegram_bot/community_support.js": {
+    "file": "assets/community_support-C1YFQoCv.js",
+    "name": "community_support",
+    "src": "resources/js/telegram_bot/community_support.js",
+    "isEntry": true,
+    "imports": [
+      "_telegram-init-COMxwxKX.js"
+    ]
+  },
+  "resources/js/telegram_bot/dashboard.js": {
+    "file": "assets/dashboard-cD5xTZf9.js",
+    "name": "dashboard",
+    "src": "resources/js/telegram_bot/dashboard.js",
+    "isEntry": true,
+    "imports": [
+      "_telegram-init-COMxwxKX.js"
+    ]
+  },
+  "resources/js/telegram_bot/health_trend.js": {
+    "file": "assets/health_trend-DCHFGFU6.js",
+    "name": "health_trend",
+    "src": "resources/js/telegram_bot/health_trend.js",
+    "isEntry": true,
+    "imports": [
+      "_telegram-init-COMxwxKX.js"
+    ]
+  },
+  "resources/js/telegram_bot/monitoring.js": {
+    "file": "assets/monitoring-BawZ3g1f.js",
+    "name": "monitoring",
+    "src": "resources/js/telegram_bot/monitoring.js",
+    "isEntry": true,
+    "imports": [
+      "_telegram-init-COMxwxKX.js"
+    ]
+  },
+  "resources/js/telegram_bot/telegram-init.js": {
+    "file": "assets/telegram-init-l0sNRNKZ.js",
+    "name": "telegram-init",
+    "src": "resources/js/telegram_bot/telegram-init.js",
+    "isEntry": true
+  },
+  "resources/js/telegram_bot/utils.js": {
+    "file": "assets/utils-l0sNRNKZ.js",
+    "name": "utils",
+    "src": "resources/js/telegram_bot/utils.js",
+    "isEntry": true
+  },
+  "resources/js/telegram_bot/vitals.js": {
+    "file": "assets/vitals-CF9bfrNR.js",
+    "name": "vitals",
+    "src": "resources/js/telegram_bot/vitals.js",
+    "isEntry": true,
+    "imports": [
+      "_telegram-init-COMxwxKX.js"
+    ]
+  }
+}
