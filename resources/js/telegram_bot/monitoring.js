@@ -1,6 +1,8 @@
 import { initTelegramWebApp } from './telegram-init.js';
 import { formatTime } from './utils.js';
 
+console.log('monitoring.js loaded');
+
 // State
 let kickCount = 0;
 let timerInterval = null;
@@ -9,8 +11,58 @@ let timerRunning = false;
 
 // Initialize Telegram Web App
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('monitoring.js DOMContentLoaded');
     initTelegramWebApp();
+    setupEventListeners();
 });
+
+/**
+ * Setup event listeners
+ */
+function setupEventListeners() {
+    // Kick button
+    const kickBtn = document.getElementById('kickBtn');
+    if (kickBtn) {
+        kickBtn.addEventListener('click', addKick);
+        console.log('kickBtn click listener added');
+    }
+
+    // Timer buttons
+    const timerBtn = document.getElementById('timerBtn');
+    if (timerBtn) {
+        timerBtn.addEventListener('click', toggleTimer);
+    }
+
+    const resetTimerBtn = document.getElementById('resetTimerBtn');
+    if (resetTimerBtn) {
+        resetTimerBtn.addEventListener('click', resetTimer);
+    }
+
+    // Mood buttons
+    const moodButtons = document.querySelectorAll('.mood-btn');
+    moodButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            selectMood(this, this.dataset.mood);
+        });
+    });
+
+    // Symptom buttons
+    const symptomButtons = document.querySelectorAll('.symptom-tag');
+    symptomButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            toggleSymptom(this);
+        });
+    });
+
+    // Save symptoms button
+    const saveSymptomsBtn = document.getElementById('saveSymptomsBtn');
+    if (saveSymptomsBtn) {
+        saveSymptomsBtn.addEventListener('click', function() {
+            saveSymptoms(this);
+        });
+        console.log('saveSymptomsBtn click listener added');
+    }
+}
 
 /**
  * Add a kick
@@ -85,8 +137,7 @@ function toggleSymptom(btn) {
 /**
  * Save symptoms log
  */
-function saveSymptoms() {
-    const btn = event.target.closest('button');
+function saveSymptoms(btn) {
     btn.innerHTML = '<iconify-icon icon="lucide:check" width="20" height="20"></iconify-icon><span class="text-[17px] font-semibold tracking-wide">Saved!</span>';
     btn.classList.remove('bg-primary');
     btn.classList.add('bg-accent');
@@ -104,3 +155,8 @@ window.resetTimer = resetTimer;
 window.selectMood = selectMood;
 window.toggleSymptom = toggleSymptom;
 window.saveSymptoms = saveSymptoms;
+
+console.log('monitoring.js: window functions assigned', {
+    addKick: typeof window.addKick,
+    saveSymptoms: typeof window.saveSymptoms
+});

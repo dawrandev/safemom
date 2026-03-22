@@ -1,8 +1,11 @@
 import { formatDate } from './utils.js';
 import { initTelegramWebApp } from './telegram-init.js';
 
+console.log('dashboard.js loaded');
+
 // Initialize Telegram Web App
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('dashboard.js DOMContentLoaded');
     initTelegramWebApp();
     updateDate();
     setupEventListeners();
@@ -59,3 +62,8 @@ function setupEventListeners() {
 // Make functions globally available for inline event handlers
 window.updateMedCount = updateMedCount;
 window.incrementKickCount = incrementKickCount;
+
+console.log('dashboard.js: window functions assigned', {
+    updateMedCount: typeof window.updateMedCount,
+    incrementKickCount: typeof window.incrementKickCount
+});

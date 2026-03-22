@@ -71,3 +71,11 @@ export function getTelegramUser() {
     }
     return null;
 }
+
+/**
+ * Get raw Telegram init data for authenticated API requests
+ * @returns {string|null}
+ */
+export function getTelegramInitData() {
+    return window.Telegram?.WebApp?.initData || null;
+}

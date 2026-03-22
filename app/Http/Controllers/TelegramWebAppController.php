@@ -19,8 +19,17 @@ class TelegramWebAppController extends Controller
             'username' => 'guest'
         ]);
 
-        // You can fetch user data from database using telegram_id
-        // $user = User::where('telegram_id', $telegramUser['id'])->first();
+        // Fetch user data from database using telegram_id
+        $user = User::where('telegram_id', $telegramUser['id'])->first();
+
+        // Get latest AI diagnosis if user exists
+        $latestDiagnosis = null;
+        if ($user) {
+            $latestDiagnosis = $user->aiDiagnoses()
+                ->with('vital')
+                ->latest()
+                ->first();
+        }
 
         $userData = [
             'name' => $telegramUser['first_name'] ?? 'Guest',
@@ -33,6 +42,7 @@ class TelegramWebAppController extends Controller
         return view('telegram_bot.dashboard', [
             'telegram_user' => $telegramUser,
             'user' => $userData,
+            'latest_diagnosis' => $latestDiagnosis,
         ]);
     }
 

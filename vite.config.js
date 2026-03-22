@@ -12,8 +12,6 @@ export default defineConfig({
                 // Telegram bot shared assets
                 'resources/css/telegram_bot/base.css',
                 'resources/css/telegram_bot/components.css',
-                'resources/js/telegram_bot/telegram-init.js',
-                'resources/js/telegram_bot/utils.js',
 
                 // Telegram bot page-specific assets
                 'resources/css/telegram_bot/dashboard.css',

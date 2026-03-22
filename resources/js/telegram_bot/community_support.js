@@ -1,7 +1,10 @@
 import { initTelegramWebApp } from './telegram-init.js';
 
+console.log('community_support.js loaded');
+
 // Initialize Telegram Web App
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('community_support.js DOMContentLoaded');
     initTelegramWebApp();
     setupEventListeners();
 });
@@ -73,6 +76,8 @@ function sendMessage() {
  */
 function setupEventListeners() {
     const input = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendMessageBtn');
+
     if (input) {
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -80,6 +85,11 @@ function setupEventListeners() {
                 sendMessage();
             }
         });
+    }
+
+    if (sendBtn) {
+        sendBtn.addEventListener('click', sendMessage);
+        console.log('sendMessageBtn click listener added');
     }
 }
 

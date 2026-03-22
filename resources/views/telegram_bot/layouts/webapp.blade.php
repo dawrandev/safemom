@@ -47,10 +47,7 @@
 <body>
     @yield('content')
 
-    <!-- Vite: Shared JavaScript -->
-    @vite(['resources/js/telegram_bot/telegram-init.js', 'resources/js/telegram_bot/utils.js'])
-
-    <!-- Page-specific scripts -->
+    <!-- Page-specific scripts (shared modules are auto-bundled) -->
     @stack('scripts')
 </body>
 

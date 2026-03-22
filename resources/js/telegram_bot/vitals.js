@@ -1,7 +1,10 @@
-import { initTelegramWebApp } from './telegram-init.js';
+import { getTelegramInitData, initTelegramWebApp } from './telegram-init.js';
+
+console.log('vitals.js loaded');
 
 // Initialize Telegram Web App
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('vitals.js DOMContentLoaded');
     initTelegramWebApp();
     setupEventListeners();
 });
@@ -18,7 +21,7 @@ function updateBP() {
 /**
  * Analyze vitals and show results
  */
-function analyzeVitals() {
+async function analyzeVitals() {
     document.getElementById('inputView').classList.add('hidden');
     document.getElementById('loadingView').classList.remove('hidden');
     document.getElementById('bottomNav').style.display = 'none';
@@ -28,11 +31,126 @@ function analyzeVitals() {
     const hr = parseInt(document.getElementById('heartRate').value);
     const temp = parseFloat(document.getElementById('temp').value) / 10;
 
-    setTimeout(() => {
+    try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        const telegramInitData = getTelegramInitData();
+        const currentUrl = new URL(window.location.href);
+        const apiUrl = new URL('/api/vitals', window.location.origin);
+
+        // Keep local debug auth bypass when the page was opened with ?skip_auth=1.
+        if (currentUrl.searchParams.get('skip_auth') === '1') {
+            apiUrl.searchParams.set('skip_auth', '1');
+        }
+
+        const response = await fetch(apiUrl.toString(), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                ...(telegramInitData ? { 'X-Telegram-Init-Data': telegramInitData } : {}),
+            },
+            body: JSON.stringify({
+                systolic_bp: sys,
+                diastolic_bp: dia,
+                heart_rate: hr,
+                temperature: temp,
+            }),
+        });
+
+        const contentType = response.headers.get('content-type') || '';
+        const payload = contentType.includes('application/json')
+            ? await response.json()
+            : { message: await response.text() };
+
+        if (!response.ok) {
+            throw new Error(payload.message || payload.error || 'Network response was not ok');
+        }
+
+        const data = payload;
+        if (!data.success) throw new Error(data.message || 'Analysis failed');
+
         document.getElementById('loadingView').classList.add('hidden');
         document.getElementById('resultView').classList.remove('hidden');
-        renderResult(sys, dia, hr, temp);
-    }, 2200);
+
+        renderAIResult(data.data, sys, dia, hr, temp);
+
+    } catch (error) {
+        console.error('Error analyzing vitals:', error);
+        document.getElementById('loadingView').classList.add('hidden');
+        document.getElementById('inputView').classList.remove('hidden');
+        document.getElementById('bottomNav').style.display = '';
+        alert(error.message || window.translations?.errorAnalyzing || 'Failed to analyze vitals. Please try again.');
+    }
+}
+
+/**
+ * Render AI analysis results
+ */
+function renderAIResult(diagnosis, sys, dia, hr, temp) {
+    const statusConfig = {
+        green: {
+            icon: 'lucide:check-circle-2',
+            iconClass: 'text-accent-foreground',
+            bg: 'bg-accent/40',
+            iconBg: 'bg-accent',
+            statusText: window.translations?.allClearTitle || 'All Clear',
+            dot: 'bg-accent-foreground',
+            badge: 'bg-accent/30 border-accent/20',
+            label: 'text-accent-foreground'
+        },
+        yellow: {
+            icon: 'lucide:alert-triangle',
+            iconClass: 'text-secondary-foreground',
+            bg: 'bg-secondary/40',
+            iconBg: 'bg-secondary',
+            statusText: window.translations?.monitorTitle || 'Monitor',
+            dot: 'bg-secondary-foreground',
+            badge: 'bg-secondary/30 border-secondary/20',
+            label: 'text-secondary-foreground'
+        },
+        red: {
+            icon: 'lucide:alert-circle',
+            iconClass: 'text-white',
+            bg: 'bg-destructive/40',
+            iconBg: 'bg-destructive',
+            statusText: window.translations?.alertTitle || 'Alert',
+            dot: 'bg-destructive',
+            badge: 'bg-destructive/20 border-destructive/20',
+            label: 'text-destructive'
+        }
+    };
+
+    const config = statusConfig[diagnosis.status] || statusConfig.yellow;
+
+    // Update status card
+    document.getElementById('statusPulse').className = 'absolute inset-0 rounded-full pulse-ring ' + config.bg;
+    document.getElementById('statusIconBg').className = 'relative w-20 h-20 rounded-[2rem] flex items-center justify-center shadow-sm ' + config.iconBg;
+    document.getElementById('statusIcon').setAttribute('icon', config.icon);
+    document.getElementById('statusIcon').className = config.iconClass;
+    document.getElementById('statusTitle').innerHTML = diagnosis.analysis_text;
+    document.getElementById('statusDesc').textContent = '';
+    document.getElementById('statusBadge').className = 'mt-6 inline-flex items-center gap-2 px-5 py-2 rounded-full border ' + config.badge;
+    document.getElementById('statusDot').className = 'w-2 h-2 rounded-full ' + config.dot;
+    document.getElementById('statusLabel').className = 'text-sm font-bold uppercase tracking-widest ' + config.label;
+    document.getElementById('statusLabel').textContent = 'Status: ' + config.statusText;
+    document.getElementById('nutritionText').textContent = diagnosis.nutrition_advice || '';
+
+    // Show emergency button if critical
+    if (diagnosis.is_critical) {
+        document.getElementById('emergencyBtn').style.display = 'flex';
+    }
+
+    // Render vitals cards (use existing vitalCard function)
+    const bpFlagged = diagnosis.status !== 'green';
+    const hrFlagged = diagnosis.status !== 'green';
+    const tempFlagged = diagnosis.status !== 'green';
+
+    let html = '';
+    html += vitalCard('lucide:heart-pulse', sys + ' / ' + dia, 'mmHg', window.translations?.bloodPressure || 'Blood Pressure', bpFlagged);
+    html += vitalCard('lucide:activity', hr, 'BPM', window.translations?.restingHeartRate || 'Heart Rate', hrFlagged);
+    html += vitalCard('lucide:thermometer', temp.toFixed(1), '°F', window.translations?.temperature || 'Temperature', tempFlagged);
+    document.getElementById('vitalsCards').innerHTML = html;
 }
 
 /**
@@ -153,10 +271,40 @@ function setupEventListeners() {
     // Blood pressure sliders
     const systolic = document.getElementById('systolic');
     const diastolic = document.getElementById('diastolic');
+    const heartRate = document.getElementById('heartRate');
+    const temp = document.getElementById('temp');
+    const analyzeButton = document.getElementById('analyzeButton');
+    const closeResultButton = document.getElementById('closeResultButton');
+    const saveReturnButton = document.getElementById('saveReturnButton');
 
     if (systolic && diastolic) {
         systolic.addEventListener('input', updateBP);
         diastolic.addEventListener('input', updateBP);
+    }
+
+    if (heartRate) {
+        heartRate.addEventListener('input', function() {
+            document.getElementById('hrDisplay').textContent = this.value;
+        });
+    }
+
+    if (temp) {
+        temp.addEventListener('input', function() {
+            document.getElementById('tempDisplay').textContent = (this.value / 10).toFixed(1);
+        });
+    }
+
+    if (analyzeButton) {
+        analyzeButton.addEventListener('click', analyzeVitals);
+        console.log('analyzeButton click listener added');
+    }
+
+    if (closeResultButton) {
+        closeResultButton.addEventListener('click', resetView);
+    }
+
+    if (saveReturnButton) {
+        saveReturnButton.addEventListener('click', resetView);
     }
 }
 
@@ -164,3 +312,9 @@ function setupEventListeners() {
 window.updateBP = updateBP;
 window.analyzeVitals = analyzeVitals;
 window.resetView = resetView;
+
+console.log('vitals.js: window functions assigned', {
+    updateBP: typeof window.updateBP,
+    analyzeVitals: typeof window.analyzeVitals,
+    resetView: typeof window.resetView
+});

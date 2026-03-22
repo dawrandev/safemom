@@ -15,6 +15,108 @@
         mood: "{{ __('monitoring.mood') }}",
         symptoms: "{{ __('monitoring.symptoms') }}"
     };
+
+    // Inline script for Telegram WebApp compatibility
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Monitoring inline script loaded');
+
+        var kickCount = 0;
+        var timerInterval = null;
+        var timerSeconds = 0;
+        var timerRunning = false;
+
+        // Kick button
+        var kickBtn = document.getElementById('kickBtn');
+        if (kickBtn) {
+            kickBtn.addEventListener('click', function() {
+                kickCount++;
+                document.getElementById('kickCount').textContent = kickCount;
+                this.classList.add('animate-kick-pulse');
+                var btn = this;
+                setTimeout(function() { btn.classList.remove('animate-kick-pulse'); }, 400);
+
+                // Update dots
+                var dots = document.getElementById('kickDots').children;
+                if (kickCount <= 10) {
+                    dots[kickCount - 1].className = 'w-3 h-3 rounded-full bg-primary';
+                }
+            });
+            console.log('Kick button listener attached');
+        }
+
+        // Timer button
+        var timerBtn = document.getElementById('timerBtn');
+        if (timerBtn) {
+            timerBtn.addEventListener('click', function() {
+                if (!timerRunning) {
+                    timerRunning = true;
+                    this.textContent = 'Pause';
+                    timerInterval = setInterval(function() {
+                        timerSeconds++;
+                        var m = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+                        var s = String(timerSeconds % 60).padStart(2, '0');
+                        document.getElementById('timerDisplay').textContent = m + ':' + s;
+                    }, 1000);
+                } else {
+                    timerRunning = false;
+                    this.textContent = 'Resume';
+                    clearInterval(timerInterval);
+                }
+            });
+        }
+
+        // Reset timer
+        var resetTimerBtn = document.getElementById('resetTimerBtn');
+        if (resetTimerBtn) {
+            resetTimerBtn.addEventListener('click', function() {
+                clearInterval(timerInterval);
+                timerRunning = false;
+                timerSeconds = 0;
+                kickCount = 0;
+                document.getElementById('timerDisplay').textContent = '00:00';
+                document.getElementById('timerBtn').textContent = 'Start';
+                document.getElementById('kickCount').textContent = '0';
+                var dots = document.getElementById('kickDots').children;
+                for (var i = 0; i < dots.length; i++) {
+                    dots[i].className = 'w-3 h-3 rounded-full bg-muted';
+                }
+            });
+        }
+
+        // Mood buttons
+        var moodButtons = document.querySelectorAll('.mood-btn');
+        moodButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                moodButtons.forEach(function(b) { b.classList.remove('active'); });
+                this.classList.add('active');
+            });
+        });
+
+        // Symptom buttons
+        var symptomButtons = document.querySelectorAll('.symptom-tag');
+        symptomButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        // Save symptoms button
+        var saveSymptomsBtn = document.getElementById('saveSymptomsBtn');
+        if (saveSymptomsBtn) {
+            saveSymptomsBtn.addEventListener('click', function() {
+                var btn = this;
+                btn.innerHTML = '<iconify-icon icon="lucide:check" width="20" height="20"></iconify-icon><span class="text-[17px] font-semibold tracking-wide">Saved!</span>';
+                btn.classList.remove('bg-primary');
+                btn.classList.add('bg-accent');
+                setTimeout(function() {
+                    btn.innerHTML = '<iconify-icon icon="lucide:save" width="20" height="20"></iconify-icon><span class="text-[17px] font-semibold tracking-wide">Save Today\'s Log</span>';
+                    btn.classList.remove('bg-accent');
+                    btn.classList.add('bg-primary');
+                }, 2000);
+            });
+            console.log('Save symptoms button listener attached');
+        }
+    });
 </script>
 @vite('resources/js/telegram_bot/monitoring.js')
 @endpush
@@ -52,12 +154,12 @@
                     <iconify-icon icon="lucide:timer" width="16" height="16" class="text-muted-foreground"></iconify-icon>
                     <span class="text-lg font-mono font-bold text-foreground" id="timerDisplay">00:00</span>
                 </div>
-                <button onclick="toggleTimer()" class="bg-primary/10 text-primary rounded-full px-4 py-2 text-sm font-bold" id="timerBtn">{{ __('monitoring.timer_start') }}</button>
-                <button onclick="resetTimer()" class="bg-muted text-muted-foreground rounded-full px-4 py-2 text-sm font-bold">{{ __('monitoring.timer_reset') }}</button>
+                <button id="timerBtn" class="bg-primary/10 text-primary rounded-full px-4 py-2 text-sm font-bold">{{ __('monitoring.timer_start') }}</button>
+                <button id="resetTimerBtn" class="bg-muted text-muted-foreground rounded-full px-4 py-2 text-sm font-bold">{{ __('monitoring.timer_reset') }}</button>
             </div>
 
             <!-- Big Kick Button -->
-            <button onclick="addKick()" id="kickBtn" class="w-36 h-36 rounded-full bg-gradient-to-br from-primary to-[#93C5FD] text-white flex flex-col items-center justify-center shadow-[0_20px_50px_-12px_rgba(167,139,250,0.6)] active:scale-90 transition-transform mb-4">
+            <button id="kickBtn" class="w-36 h-36 rounded-full bg-gradient-to-br from-primary to-[#93C5FD] text-white flex flex-col items-center justify-center shadow-[0_20px_50px_-12px_rgba(167,139,250,0.6)] active:scale-90 transition-transform mb-4">
                 <span class="text-5xl font-extrabold font-heading" id="kickCount">0</span>
                 <span class="text-sm font-semibold opacity-80 mt-1">{{ __('monitoring.kicks') }}</span>
             </button>
@@ -118,19 +220,19 @@
             <div class="bg-card rounded-[2rem] p-6 shadow-[0_8px_24px_rgb(0,0,0,0.03)] border border-border/20 mb-4">
                 <p class="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">{{ __('monitoring.mood') }}</p>
                 <div class="flex justify-between">
-                    <button onclick="selectMood(this,'Happy')" class="mood-btn flex flex-col items-center gap-2 p-3 rounded-2xl transition-all">
+                    <button data-mood="Happy" class="mood-btn flex flex-col items-center gap-2 p-3 rounded-2xl transition-all">
                         <span class="text-3xl">😊</span>
                         <span class="text-xs font-semibold text-muted-foreground">{{ __('monitoring.mood_happy') }}</span>
                     </button>
-                    <button onclick="selectMood(this,'Calm')" class="mood-btn flex flex-col items-center gap-2 p-3 rounded-2xl transition-all">
+                    <button data-mood="Calm" class="mood-btn flex flex-col items-center gap-2 p-3 rounded-2xl transition-all">
                         <span class="text-3xl">😌</span>
                         <span class="text-xs font-semibold text-muted-foreground">{{ __('monitoring.mood_calm') }}</span>
                     </button>
-                    <button onclick="selectMood(this,'Tired')" class="mood-btn flex flex-col items-center gap-2 p-3 rounded-2xl transition-all">
+                    <button data-mood="Tired" class="mood-btn flex flex-col items-center gap-2 p-3 rounded-2xl transition-all">
                         <span class="text-3xl">😴</span>
                         <span class="text-xs font-semibold text-muted-foreground">{{ __('monitoring.mood_tired') }}</span>
                     </button>
-                    <button onclick="selectMood(this,'Anxious')" class="mood-btn flex flex-col items-center gap-2 p-3 rounded-2xl transition-all">
+                    <button data-mood="Anxious" class="mood-btn flex flex-col items-center gap-2 p-3 rounded-2xl transition-all">
                         <span class="text-3xl">😟</span>
                         <span class="text-xs font-semibold text-muted-foreground">{{ __('monitoring.mood_anxious') }}</span>
                     </button>
@@ -141,20 +243,20 @@
             <div class="bg-card rounded-[2rem] p-6 shadow-[0_8px_24px_rgb(0,0,0,0.03)] border border-border/20">
                 <p class="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">{{ __('monitoring.symptoms') }}</p>
                 <div class="flex flex-wrap gap-3">
-                    <button onclick="toggleSymptom(this)" class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_nausea') }}</button>
-                    <button onclick="toggleSymptom(this)" class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_back_pain') }}</button>
-                    <button onclick="toggleSymptom(this)" class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_swelling') }}</button>
-                    <button onclick="toggleSymptom(this)" class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_headache') }}</button>
-                    <button onclick="toggleSymptom(this)" class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_heartburn') }}</button>
-                    <button onclick="toggleSymptom(this)" class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_cramping') }}</button>
-                    <button onclick="toggleSymptom(this)" class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_insomnia') }}</button>
-                    <button onclick="toggleSymptom(this)" class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_dizziness') }}</button>
+                    <button class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_nausea') }}</button>
+                    <button class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_back_pain') }}</button>
+                    <button class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_swelling') }}</button>
+                    <button class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_headache') }}</button>
+                    <button class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_heartburn') }}</button>
+                    <button class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_cramping') }}</button>
+                    <button class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_insomnia') }}</button>
+                    <button class="symptom-tag px-4 py-2 rounded-full border border-border text-sm font-semibold text-foreground transition-all">{{ __('monitoring.symptom_dizziness') }}</button>
                 </div>
             </div>
 
             <!-- Save Button -->
             <div class="mt-6 pb-8">
-                <button onclick="saveSymptoms()" class="w-full bg-primary text-primary-foreground rounded-full py-5 px-6 flex items-center justify-center gap-3 shadow-[0_16px_32px_-12px_rgba(167,139,250,0.6)] active:scale-[0.97]">
+                <button id="saveSymptomsBtn" class="w-full bg-primary text-primary-foreground rounded-full py-5 px-6 flex items-center justify-center gap-3 shadow-[0_16px_32px_-12px_rgba(167,139,250,0.6)] active:scale-[0.97]">
                     <iconify-icon icon="lucide:save" width="20" height="20"></iconify-icon>
                     <span class="text-[17px] font-semibold tracking-wide">{{ __('monitoring.save_log') }}</span>
                 </button>

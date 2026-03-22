@@ -36,6 +36,10 @@
     "dashboard.gentle_movement_desc": "A 15-minute afternoon walk can help ease round ligament pains.",
     "dashboard.sleep_position": "Sleep Position",
     "dashboard.sleep_position_desc": "Left-side sleeping improves blood flow to your baby during 2nd trimester.",
+    "dashboard.latest_checkup": "Latest Checkup",
+    "dashboard.status_green": "All readings normal",
+    "dashboard.status_yellow": "Monitoring required",
+    "dashboard.status_red": "Urgent doctor consultation needed",
 
     "vitals.title": "Vitals & AI Analysis - SafeMom",
     "vitals.step": "Step :current of :total",
@@ -65,6 +69,7 @@
     "vitals.monitor_desc": "One or more readings are slightly elevated. Continue tracking.",
     "vitals.alert_title": "Alert",
     "vitals.alert_desc": "Your readings require immediate attention. Contact your doctor.",
+    "vitals.error_analyzing": "Analysis failed. Please try again.",
 
     "monitoring.title": "Monitoring Hub - SafeMom",
     "monitoring.monitoring": "Monitoring",

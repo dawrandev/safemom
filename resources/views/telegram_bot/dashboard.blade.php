@@ -12,6 +12,46 @@
         medCounter: "{{ __('dashboard.med_counter', ['completed' => ':completed', 'total' => ':total']) }}",
         kicksToday: "{{ __('dashboard.kicks_today') }}"
     };
+
+    // Inline script for Telegram WebApp compatibility
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Dashboard inline script loaded');
+
+        // Update date
+        var d = new Date();
+        var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        var dateText = days[d.getDay()] + ', ' + months[d.getMonth()] + ' ' + d.getDate();
+        var dateEl = document.getElementById('dateText');
+        if (dateEl) dateEl.textContent = dateText;
+
+        // Medication counter
+        function updateMedCount() {
+            var checks = document.querySelectorAll('.med-check');
+            var count = 0;
+            checks.forEach(function(c) {
+                if (c.checked) count++;
+            });
+            document.getElementById('medCounter').textContent = count + ' / 4';
+        }
+
+        // Med checkboxes
+        var medChecks = document.querySelectorAll('.med-check');
+        medChecks.forEach(function(checkbox) {
+            checkbox.addEventListener('change', updateMedCount);
+        });
+
+        // Quick kick counter
+        var kickButton = document.querySelector('[data-kick-button]');
+        if (kickButton) {
+            kickButton.addEventListener('click', function() {
+                var kickNum = document.getElementById('quickKickNum');
+                var currentCount = parseInt(kickNum.innerText);
+                kickNum.innerText = currentCount + 1;
+            });
+            console.log('Kick button listener attached');
+        }
+    });
 </script>
 @vite('resources/js/telegram_bot/dashboard.js')
 @endpush
@@ -74,6 +114,49 @@
                 </div>
             </div>
 
+            <!-- Latest Diagnosis Card -->
+            @if($latest_diagnosis)
+            <div class="mt-8 bg-card rounded-[2.5rem] p-8 shadow-[0_12px_40px_rgb(0,0,0,0.04)] border border-border/30 anim-in anim-d2">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-bold font-heading">{{ __('dashboard.latest_checkup') }}</h3>
+                    <span class="text-xs text-muted-foreground">{{ $latest_diagnosis->created_at->diffForHumans() }}</span>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    @if($latest_diagnosis->status === 'green')
+                        <div class="w-14 h-14 rounded-[1.4rem] bg-accent/20 flex items-center justify-center">
+                            <iconify-icon icon="lucide:check-circle-2" width="28" height="28" class="text-accent"></iconify-icon>
+                        </div>
+                    @elseif($latest_diagnosis->status === 'yellow')
+                        <div class="w-14 h-14 rounded-[1.4rem] bg-secondary/20 flex items-center justify-center">
+                            <iconify-icon icon="lucide:alert-triangle" width="28" height="28" class="text-secondary-foreground"></iconify-icon>
+                        </div>
+                    @else
+                        <div class="w-14 h-14 rounded-[1.4rem] bg-destructive/20 flex items-center justify-center">
+                            <iconify-icon icon="lucide:alert-circle" width="28" height="28" class="text-destructive"></iconify-icon>
+                        </div>
+                    @endif
+
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold mb-1">
+                            @if($latest_diagnosis->status === 'green')
+                                {{ __('dashboard.status_green') }}
+                            @elseif($latest_diagnosis->status === 'yellow')
+                                {{ __('dashboard.status_yellow') }}
+                            @else
+                                {{ __('dashboard.status_red') }}
+                            @endif
+                        </p>
+                        <p class="text-xs text-muted-foreground line-clamp-2">{{ $latest_diagnosis->analysis_text }}</p>
+                    </div>
+
+                    <a href="{{ route('telegram.webapp.vitals') }}" class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <iconify-icon icon="lucide:chevron-right" width="20" height="20" class="text-primary"></iconify-icon>
+                    </a>
+                </div>
+            </div>
+            @endif
+
             <!-- Start AI Check-up -->
             <div class="mt-8 anim-in anim-d2">
                 <a href="{{ route('telegram.webapp.vitals') }}" class="block w-full bg-primary text-primary-foreground rounded-full py-5 px-6 flex items-center justify-center gap-3 shadow-[0_16px_32px_-12px_rgba(167,139,250,0.6)] active:scale-[0.97]">
@@ -90,7 +173,7 @@
                 </div>
                 <div class="bg-card rounded-[2rem] p-6 shadow-[0_8px_24px_rgb(0,0,0,0.03)] border border-border/20 space-y-4">
                     <div class="flex items-center gap-4">
-                        <input type="checkbox" id="med1" class="med-check hidden" onchange="updateMedCount()">
+                        <input type="checkbox" id="med1" class="med-check hidden">
                         <label for="med1" class="flex items-center gap-4 flex-1 cursor-pointer">
                             <div class="check-box w-7 h-7 rounded-lg border-2 border-border flex items-center justify-center transition-all">
                                 <iconify-icon icon="lucide:check" width="16" height="16" class="text-white hidden"></iconify-icon>
@@ -103,7 +186,7 @@
                         </label>
                     </div>
                     <div class="flex items-center gap-4">
-                        <input type="checkbox" id="med2" class="med-check hidden" onchange="updateMedCount()">
+                        <input type="checkbox" id="med2" class="med-check hidden">
                         <label for="med2" class="flex items-center gap-4 flex-1 cursor-pointer">
                             <div class="check-box w-7 h-7 rounded-lg border-2 border-border flex items-center justify-center transition-all">
                                 <iconify-icon icon="lucide:check" width="16" height="16" class="text-white hidden"></iconify-icon>
@@ -116,7 +199,7 @@
                         </label>
                     </div>
                     <div class="flex items-center gap-4">
-                        <input type="checkbox" id="med3" class="med-check hidden" onchange="updateMedCount()">
+                        <input type="checkbox" id="med3" class="med-check hidden">
                         <label for="med3" class="flex items-center gap-4 flex-1 cursor-pointer">
                             <div class="check-box w-7 h-7 rounded-lg border-2 border-border flex items-center justify-center transition-all">
                                 <iconify-icon icon="lucide:check" width="16" height="16" class="text-white hidden"></iconify-icon>
@@ -129,7 +212,7 @@
                         </label>
                     </div>
                     <div class="flex items-center gap-4">
-                        <input type="checkbox" id="med4" class="med-check hidden" onchange="updateMedCount()">
+                        <input type="checkbox" id="med4" class="med-check hidden">
                         <label for="med4" class="flex items-center gap-4 flex-1 cursor-pointer">
                             <div class="check-box w-7 h-7 rounded-lg border-2 border-border flex items-center justify-center transition-all">
                                 <iconify-icon icon="lucide:check" width="16" height="16" class="text-white hidden"></iconify-icon>

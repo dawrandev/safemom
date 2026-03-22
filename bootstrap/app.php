@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'telegram.webapp' => \App\Http\Middleware\ValidateTelegramWebApp::class,
             'setlocale' => \App\Http\Middleware\SetLocale::class,
+            'auth.telegram' => \App\Http\Middleware\AuthenticateTelegram::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

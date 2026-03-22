@@ -36,6 +36,10 @@
     "dashboard.gentle_movement_desc": "15-минутная дневная прогулка может помочь облегчить боли в круглых связках.",
     "dashboard.sleep_position": "Позиция для Сна",
     "dashboard.sleep_position_desc": "Сон на левом боку улучшает кровоток к вашему ребёнку во 2-м триместре.",
+    "dashboard.latest_checkup": "Последняя Проверка",
+    "dashboard.status_green": "Все показатели в норме",
+    "dashboard.status_yellow": "Требуется наблюдение",
+    "dashboard.status_red": "Необходима срочная консультация врача",
 
     "vitals.title": "Показатели и AI Анализ - SafeMom",
     "vitals.step": "Шаг :current из :total",
@@ -65,6 +69,7 @@
     "vitals.monitor_desc": "Один или несколько показателей слегка повышены. Продолжайте отслеживать.",
     "vitals.alert_title": "Тревога",
     "vitals.alert_desc": "Ваши показатели требуют немедленного внимания. Свяжитесь с врачом.",
+    "vitals.error_analyzing": "Ошибка при анализе. Попробуйте снова.",
 
     "monitoring.title": "Центр Мониторинга - SafeMom",
     "monitoring.monitoring": "Мониторинг",

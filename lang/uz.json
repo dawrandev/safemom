@@ -36,6 +36,10 @@
     "dashboard.gentle_movement_desc": "15 daqiqalik tushdan keyin sayr ligament og'riqlarini engillashtirishga yordam beradi.",
     "dashboard.sleep_position": "Uyqu Holati",
     "dashboard.sleep_position_desc": "Chap tomonda uxlash 2-trimestrda chaqaloqqa qon oqimini yaxshilaydi.",
+    "dashboard.latest_checkup": "So'nggi Tekshiruv",
+    "dashboard.status_green": "Barcha ko'rsatkichlar me'yorda",
+    "dashboard.status_yellow": "Kuzatish talab etiladi",
+    "dashboard.status_red": "Shifokorga zudlik bilan murojaat qiling",
 
     "vitals.title": "Vital Ko'rsatkichlar va AI Tahlil - SafeMom",
     "vitals.step": ":current-qadam, jami :total",
@@ -65,6 +69,7 @@
     "vitals.monitor_desc": "Bir yoki bir nechta ko'rsatkichlar biroz yuqori. Kuzatishda davom eting.",
     "vitals.alert_title": "Ogohlantirish",
     "vitals.alert_desc": "Sizning ko'rsatkichlaringiz zudlik bilan e'tibor talab qiladi. Shifokoringizga murojaat qiling.",
+    "vitals.error_analyzing": "Tahlilni amalga oshirishda xatolik. Qaytadan urinib ko'ring.",
 
     "monitoring.title": "Monitoring Markazi - SafeMom",
     "monitoring.monitoring": "Monitoring",

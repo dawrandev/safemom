@@ -13,6 +13,44 @@
         weight: "{{ __('health_trend.weight') }}",
         exportPdf: "{{ __('health_trend.export_pdf') }}"
     };
+
+    // Inline script for Telegram WebApp compatibility
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Health trend inline script loaded');
+
+        // Show chart
+        function showChart(type) {
+            document.getElementById('chartBP').classList.toggle('hidden', type !== 'bp');
+            document.getElementById('chartWeight').classList.toggle('hidden', type !== 'weight');
+            document.getElementById('tabBP').className = 'tab-btn pb-3 text-sm font-bold ' + (type === 'bp' ? 'tab-active' : 'text-muted-foreground');
+            document.getElementById('tabWeight').className = 'tab-btn pb-3 text-sm font-bold ' + (type === 'weight' ? 'tab-active' : 'text-muted-foreground');
+        }
+
+        // Chart tab buttons
+        var chartButtons = document.querySelectorAll('[data-chart]');
+        chartButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                showChart(this.dataset.chart);
+            });
+        });
+
+        // Export PDF button
+        var exportPdfBtn = document.getElementById('exportPdfBtn');
+        if (exportPdfBtn) {
+            exportPdfBtn.addEventListener('click', function() {
+                var btn = this;
+                var orig = btn.innerHTML;
+                btn.innerHTML = '<iconify-icon icon="lucide:loader-2" width="22" height="22" class="text-primary animate-spin-slow"></iconify-icon><span class="text-[16px] font-semibold tracking-wide text-foreground">Generating PDF...</span>';
+                setTimeout(function() {
+                    btn.innerHTML = '<iconify-icon icon="lucide:check-circle-2" width="22" height="22" class="text-accent-foreground"></iconify-icon><span class="text-[16px] font-semibold tracking-wide text-foreground">PDF Ready — Download</span>';
+                    setTimeout(function() {
+                        btn.innerHTML = orig;
+                    }, 3000);
+                }, 2000);
+            });
+            console.log('Export PDF button listener attached');
+        }
+    });
 </script>
 @vite('resources/js/telegram_bot/health_trend.js')
 @endpush
@@ -38,7 +76,7 @@
 
             <!-- Export PDF Button -->
             <div class="mt-4 anim-in">
-                <button onclick="exportPDF(this)" class="w-full bg-card border border-border/40 rounded-full py-4 px-6 flex items-center justify-center gap-3 shadow-[0_4px_16px_rgb(0,0,0,0.03)] active:scale-[0.97]">
+                <button id="exportPdfBtn" class="w-full bg-card border border-border/40 rounded-full py-4 px-6 flex items-center justify-center gap-3 shadow-[0_4px_16px_rgb(0,0,0,0.03)] active:scale-[0.97]">
                     <iconify-icon icon="lucide:file-text" width="22" height="22" class="text-primary"></iconify-icon>
                     <span class="text-[16px] font-semibold tracking-wide text-foreground">{{ __('health_trend.export_pdf') }}</span>
                 </button>
@@ -46,8 +84,8 @@
 
             <!-- Chart Tabs -->
             <div class="mt-8 flex gap-6 border-b border-border/40 anim-in" style="animation-delay:.05s">
-                <button onclick="showChart('bp')" class="tab-btn pb-3 text-sm font-bold tab-active" id="tabBP">{{ __('health_trend.blood_pressure') }}</button>
-                <button onclick="showChart('weight')" class="tab-btn pb-3 text-sm font-bold text-muted-foreground" id="tabWeight">{{ __('health_trend.weight') }}</button>
+                <button data-chart="bp" class="tab-btn pb-3 text-sm font-bold tab-active" id="tabBP">{{ __('health_trend.blood_pressure') }}</button>
+                <button data-chart="weight" class="tab-btn pb-3 text-sm font-bold text-muted-foreground" id="tabWeight">{{ __('health_trend.weight') }}</button>
             </div>
 
             <!-- Blood Pressure Chart -->

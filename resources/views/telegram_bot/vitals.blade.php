@@ -20,8 +20,114 @@
         systolic: "{{ __('vitals.systolic') }}",
         diastolic: "{{ __('vitals.diastolic') }}",
         restingHeartRate: "{{ __('vitals.resting_heart_rate') }}",
-        temperature: "{{ __('vitals.temperature') }}"
+        temperature: "{{ __('vitals.temperature') }}",
+        errorAnalyzing: "{{ __('vitals.error_analyzing') }}"
     };
+
+    // Inline fallback for Telegram WebApp compatibility
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Vitals inline script loaded');
+
+        // Update BP display
+        function updateBP() {
+            var s = document.getElementById('systolic').value;
+            var d = document.getElementById('diastolic').value;
+            document.getElementById('bpDisplay').textContent = s + ' / ' + d;
+        }
+
+        // Sliders
+        var systolic = document.getElementById('systolic');
+        var diastolic = document.getElementById('diastolic');
+        var heartRate = document.getElementById('heartRate');
+        var temp = document.getElementById('temp');
+
+        if (systolic) systolic.addEventListener('input', updateBP);
+        if (diastolic) diastolic.addEventListener('input', updateBP);
+        if (heartRate) {
+            heartRate.addEventListener('input', function() {
+                document.getElementById('hrDisplay').textContent = this.value;
+            });
+        }
+        if (temp) {
+            temp.addEventListener('input', function() {
+                document.getElementById('tempDisplay').textContent = (this.value / 10).toFixed(1);
+            });
+        }
+
+        // Analyze button
+        var analyzeBtn = document.getElementById('analyzeButton');
+        if (analyzeBtn) {
+            analyzeBtn.addEventListener('click', function() {
+                console.log('Analyze button clicked');
+                if (typeof window.analyzeVitals === 'function') {
+                    window.analyzeVitals();
+                } else {
+                    // Fallback - direct implementation
+                    document.getElementById('inputView').classList.add('hidden');
+                    document.getElementById('loadingView').classList.remove('hidden');
+                    document.getElementById('bottomNav').style.display = 'none';
+
+                    var sys = parseInt(document.getElementById('systolic').value);
+                    var dia = parseInt(document.getElementById('diastolic').value);
+                    var hr = parseInt(document.getElementById('heartRate').value);
+                    var tempVal = parseFloat(document.getElementById('temp').value) / 10;
+
+                    var csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+                    fetch('/api/vitals', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            systolic_bp: sys,
+                            diastolic_bp: dia,
+                            heart_rate: hr,
+                            temperature: tempVal
+                        })
+                    })
+                    .then(function(response) { return response.json(); })
+                    .then(function(data) {
+                        document.getElementById('loadingView').classList.add('hidden');
+                        if (data.success) {
+                            document.getElementById('resultView').classList.remove('hidden');
+                            // Render results
+                            var status = data.data.status || 'yellow';
+                            document.getElementById('statusTitle').innerHTML = data.data.analysis_text || 'Analysis complete';
+                            document.getElementById('nutritionText').textContent = data.data.nutrition_advice || '';
+                        } else {
+                            document.getElementById('inputView').classList.remove('hidden');
+                            document.getElementById('bottomNav').style.display = '';
+                            alert(data.message || 'Analysis failed');
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Error:', error);
+                        document.getElementById('loadingView').classList.add('hidden');
+                        document.getElementById('inputView').classList.remove('hidden');
+                        document.getElementById('bottomNav').style.display = '';
+                        alert('Failed to analyze vitals');
+                    });
+                }
+            });
+            console.log('Analyze button listener attached');
+        }
+
+        // Reset buttons
+        var closeBtn = document.getElementById('closeResultButton');
+        var saveBtn = document.getElementById('saveReturnButton');
+
+        function resetView() {
+            document.getElementById('resultView').classList.add('hidden');
+            document.getElementById('inputView').classList.remove('hidden');
+            document.getElementById('bottomNav').style.display = '';
+        }
+
+        if (closeBtn) closeBtn.addEventListener('click', resetView);
+        if (saveBtn) saveBtn.addEventListener('click', resetView);
+    });
 </script>
 @vite('resources/js/telegram_bot/vitals.js')
 @endpush
@@ -30,7 +136,7 @@
 <div class="flex flex-col h-screen bg-background overflow-hidden relative" id="app">
 
     <!-- INPUT VIEW -->
-    <div id="inputView">
+    <div id="inputView" class="flex flex-col flex-1 min-h-0">
         <!-- Header -->
         <header class="flex flex-col px-6 pt-6 pb-3 shrink-0 gap-4">
             <div class="flex justify-between items-center">
@@ -53,7 +159,7 @@
             </div>
         </header>
 
-        <main class="flex-1 overflow-y-auto no-scrollbar px-6 pb-24">
+        <main class="flex-1 min-h-0 overflow-y-auto no-scrollbar px-6 pb-28">
             <!-- Blood Pressure -->
             <div class="mt-4 bg-card rounded-[2.5rem] p-8 shadow-[0_12px_40px_rgb(0,0,0,0.04)] border border-border/30 flex flex-col gap-6 anim-in">
                 <div class="flex justify-between items-start">
@@ -70,9 +176,9 @@
                 </div>
                 <div>
                     <label class="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-2 block">{{ __('vitals.systolic') }}</label>
-                    <input type="range" min="80" max="200" value="120" id="systolic" oninput="updateBP()">
+                    <input type="range" min="80" max="200" value="120" id="systolic">
                     <label class="text-[11px] font-bold text-muted-foreground uppercase tracking-widest mb-2 block mt-4">{{ __('vitals.diastolic') }}</label>
-                    <input type="range" min="40" max="130" value="80" id="diastolic" oninput="updateBP()">
+                    <input type="range" min="40" max="130" value="80" id="diastolic">
                     <div class="flex justify-between mt-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                         <span>{{ __('vitals.low') }}</span><span>{{ __('vitals.normal') }}</span><span>{{ __('vitals.high') }}</span>
                     </div>
@@ -94,7 +200,7 @@
                     </div>
                 </div>
                 <div>
-                    <input type="range" min="40" max="140" value="72" id="heartRate" oninput="document.getElementById('hrDisplay').textContent=this.value">
+                    <input type="range" min="40" max="140" value="72" id="heartRate">
                     <div class="flex justify-between mt-3 text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                         <span>40</span><span>80</span><span>120+</span>
                     </div>
@@ -116,7 +222,7 @@
                     </div>
                 </div>
                 <div>
-                    <input type="range" min="960" max="1040" value="984" id="temp" oninput="document.getElementById('tempDisplay').textContent=(this.value/10).toFixed(1)">
+                    <input type="range" min="960" max="1040" value="984" id="temp">
                 </div>
             </div>
 
@@ -130,15 +236,15 @@
                     <p class="text-[14px] leading-relaxed text-muted-foreground">{{ __('vitals.ai_insight_desc') }}</p>
                 </div>
             </div>
-        </main>
 
-        <!-- Analyze Button -->
-        <div class="absolute bottom-0 left-0 right-0 p-6 pt-2 pb-6 bg-gradient-to-t from-background via-background to-transparent z-40">
-            <button onclick="analyzeVitals()" class="w-full bg-primary text-primary-foreground rounded-full py-5 px-6 flex items-center justify-center gap-3 shadow-[0_16px_32px_-12px_rgba(167,139,250,0.6)] active:scale-[0.97]">
+            <!-- Analyze Button -->
+            <div class="mt-8 pb-4">
+                <button id="analyzeButton" class="w-full bg-primary text-primary-foreground rounded-full py-5 px-6 flex items-center justify-center gap-3 shadow-[0_16px_32px_-12px_rgba(167,139,250,0.6)] active:scale-[0.97]">
                 <span class="text-[17px] font-semibold tracking-wide">{{ __('vitals.analyze_results') }}</span>
                 <iconify-icon icon="lucide:arrow-right" width="22" height="22"></iconify-icon>
-            </button>
-        </div>
+                </button>
+            </div>
+        </main>
     </div>
 
     <!-- LOADING VIEW -->
@@ -163,7 +269,7 @@
                 <span class="text-sm font-medium text-muted-foreground tracking-wide uppercase">{{ __('vitals.analysis_complete') }}</span>
                 <h1 class="text-3xl font-bold font-heading tracking-tight text-foreground">{{ __('vitals.ai_summary') }}</h1>
             </div>
-            <button onclick="resetView()" class="w-12 h-12 flex items-center justify-center bg-card rounded-[1.2rem] shadow-[0_4px_16px_rgb(0,0,0,0.03)] border border-border/40">
+            <button id="closeResultButton" class="w-12 h-12 flex items-center justify-center bg-card rounded-[1.2rem] shadow-[0_4px_16px_rgb(0,0,0,0.03)] border border-border/40">
                 <iconify-icon icon="lucide:x" width="24" height="24" class="text-muted-foreground"></iconify-icon>
             </button>
         </header>
@@ -208,7 +314,7 @@
                     <iconify-icon icon="lucide:phone" width="22" height="22"></iconify-icon>
                     <span class="text-[17px] font-semibold tracking-wide">{{ __('vitals.call_emergency') }}</span>
                 </button>
-                <button onclick="resetView()" class="w-full bg-muted text-foreground border border-border/60 rounded-full py-5 px-6 flex items-center justify-center gap-3">
+                <button id="saveReturnButton" class="w-full bg-muted text-foreground border border-border/60 rounded-full py-5 px-6 flex items-center justify-center gap-3">
                     <span class="text-[17px] font-semibold tracking-wide">{{ __('vitals.save_return') }}</span>
                 </button>
             </div>

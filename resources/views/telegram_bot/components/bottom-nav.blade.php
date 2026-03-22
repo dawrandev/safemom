@@ -1,5 +1,5 @@
 <!-- Bottom Navigation -->
-<div class="absolute bottom-6 left-6 right-6 z-50">
+<div id="bottomNav" class="absolute bottom-6 left-6 right-6 z-50">
     <div class="bg-card/90 backdrop-blur-xl rounded-[2.5rem] shadow-[0_12px_40px_rgb(0,0,0,0.08)] border border-white px-6 py-5 flex justify-between items-center">
         <a href="{{ route('telegram.webapp.dashboard') }}" class="flex flex-col items-center gap-1.5 {{ request()->routeIs('telegram.webapp.dashboard') ? 'text-primary' : 'text-muted-foreground hover:text-primary' }} transition-colors">
             <div class="relative flex items-center justify-center w-8 h-8">

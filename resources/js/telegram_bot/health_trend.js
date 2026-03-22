@@ -1,9 +1,35 @@
 import { initTelegramWebApp } from './telegram-init.js';
 
+console.log('health_trend.js loaded');
+
 // Initialize Telegram Web App
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('health_trend.js DOMContentLoaded');
     initTelegramWebApp();
+    setupEventListeners();
 });
+
+/**
+ * Setup event listeners
+ */
+function setupEventListeners() {
+    // Export PDF button
+    const exportPdfBtn = document.getElementById('exportPdfBtn');
+    if (exportPdfBtn) {
+        exportPdfBtn.addEventListener('click', function() {
+            exportPDF(this);
+        });
+        console.log('exportPdfBtn click listener added');
+    }
+
+    // Chart tab buttons
+    const chartButtons = document.querySelectorAll('[data-chart]');
+    chartButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            showChart(this.dataset.chart);
+        });
+    });
+}
 
 /**
  * Show chart by type

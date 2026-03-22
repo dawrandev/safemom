@@ -4,7 +4,7 @@
     "name": "telegram-init"
   },
   "resources/css/app.css": {
-    "file": "assets/app-Dg86nB0Y.css",
+    "file": "assets/app-BY8K1kdm.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -50,7 +50,7 @@
     "isEntry": true
   },
   "resources/js/telegram_bot/community_support.js": {
-    "file": "assets/community_support-C1YFQoCv.js",
+    "file": "assets/community_support-Dq9Qut25.js",
     "name": "community_support",
     "src": "resources/js/telegram_bot/community_support.js",
     "isEntry": true,
@@ -59,7 +59,7 @@
     ]
   },
   "resources/js/telegram_bot/dashboard.js": {
-    "file": "assets/dashboard-cD5xTZf9.js",
+    "file": "assets/dashboard-9dJd_dfU.js",
     "name": "dashboard",
     "src": "resources/js/telegram_bot/dashboard.js",
     "isEntry": true,
@@ -68,7 +68,7 @@
     ]
   },
   "resources/js/telegram_bot/health_trend.js": {
-    "file": "assets/health_trend-DCHFGFU6.js",
+    "file": "assets/health_trend-Ctzh74BT.js",
     "name": "health_trend",
     "src": "resources/js/telegram_bot/health_trend.js",
     "isEntry": true,
@@ -77,7 +77,7 @@
     ]
   },
   "resources/js/telegram_bot/monitoring.js": {
-    "file": "assets/monitoring-BawZ3g1f.js",
+    "file": "assets/monitoring-U0zZFazr.js",
     "name": "monitoring",
     "src": "resources/js/telegram_bot/monitoring.js",
     "isEntry": true,
@@ -85,20 +85,8 @@
       "_telegram-init-COMxwxKX.js"
     ]
   },
-  "resources/js/telegram_bot/telegram-init.js": {
-    "file": "assets/telegram-init-l0sNRNKZ.js",
-    "name": "telegram-init",
-    "src": "resources/js/telegram_bot/telegram-init.js",
-    "isEntry": true
-  },
-  "resources/js/telegram_bot/utils.js": {
-    "file": "assets/utils-l0sNRNKZ.js",
-    "name": "utils",
-    "src": "resources/js/telegram_bot/utils.js",
-    "isEntry": true
-  },
   "resources/js/telegram_bot/vitals.js": {
-    "file": "assets/vitals-CF9bfrNR.js",
+    "file": "assets/vitals-Zrcz--pp.js",
     "name": "vitals",
     "src": "resources/js/telegram_bot/vitals.js",
     "isEntry": true,

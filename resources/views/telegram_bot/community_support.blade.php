@@ -104,9 +104,9 @@
                             <iconify-icon icon="lucide:paperclip" width="18" height="18" class="text-muted-foreground"></iconify-icon>
                         </button>
                         <div class="flex-1 bg-muted rounded-full px-5 py-3 flex items-center">
-                            <input type="text" placeholder="{{ __('community.type_message') }}" class="bg-transparent w-full text-[14px] text-foreground outline-none placeholder:text-muted-foreground" id="chatInput" onkeydown="if(event.key==='Enter')sendMessage()">
+                            <input type="text" placeholder="{{ __('community.type_message') }}" class="bg-transparent w-full text-[14px] text-foreground outline-none placeholder:text-muted-foreground" id="chatInput">
                         </div>
-                        <button onclick="sendMessage()" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow-md shadow-primary/20">
+                        <button id="sendMessageBtn" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow-md shadow-primary/20">
                             <iconify-icon icon="lucide:send" width="18" height="18" class="text-white"></iconify-icon>
                         </button>
                     </div>
