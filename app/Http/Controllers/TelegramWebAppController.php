@@ -103,4 +103,15 @@ class TelegramWebAppController extends Controller
             'telegram_user' => $telegramUser,
         ]);
     }
+
+    /**
+     * Set application language
+     */
+    public function setLanguage($locale)
+    {
+        if (in_array($locale, ['uz', 'ru', 'en'])) {
+            session(['locale' => $locale]);
+        }
+        return redirect()->back();
+    }
 }

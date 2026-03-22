@@ -1,12 +1,18 @@
 @extends('telegram_bot.layouts.webapp')
 
-@section('title', 'Dashboard - MamaCare')
+@section('title', 'Dashboard - SafeMom')
 
 @push('styles')
 @vite('resources/css/telegram_bot/dashboard.css')
 @endpush
 
 @push('scripts')
+<script>
+    window.translations = {
+        medCounter: "{{ __('dashboard.med_counter', ['completed' => ':completed', 'total' => ':total']) }}",
+        kicksToday: "{{ __('dashboard.kicks_today') }}"
+    };
+</script>
 @vite('resources/js/telegram_bot/dashboard.js')
 @endpush
 
@@ -14,19 +20,22 @@
     <div class="flex flex-col h-screen bg-background overflow-hidden relative">
 
         <!-- Header -->
-        <header class="flex justify-between items-end px-6 pt-14 pb-4 shrink-0 anim-in">
+        <header class="flex justify-between items-end px-6 pt-6 pb-3 shrink-0 anim-in">
             <div class="flex flex-col gap-1">
-                <span class="text-sm font-medium text-muted-foreground" id="dateText">Thursday, Oct 12</span>
-                <h1 class="text-3xl font-bold font-heading tracking-tight text-foreground">Hi, Sarah</h1>
+                <span class="text-sm font-medium text-muted-foreground" id="dateText">{{ __('dashboard.date_format') }}</span>
+                <h1 class="text-3xl font-bold font-heading tracking-tight text-foreground">{{ __('dashboard.greeting', ['name' => $user['name'] ?? 'Sarah']) }}</h1>
             </div>
-            <div class="relative w-12 h-12 flex items-center justify-center bg-card rounded-[1.2rem] shadow-[0_4px_16px_rgb(0,0,0,0.03)] border border-border/40">
-                <iconify-icon icon="lucide:bell" width="22" height="22" class="text-foreground"></iconify-icon>
-                <div class="absolute top-3 right-3 w-2.5 h-2.5 bg-destructive rounded-full border-2 border-card"></div>
+            <div class="flex items-center gap-3">
+                @include('telegram_bot.components.language-switcher')
+                <div class="relative w-12 h-12 flex items-center justify-center bg-card rounded-[1.2rem] shadow-[0_4px_16px_rgb(0,0,0,0.03)] border border-border/40">
+                    <iconify-icon icon="lucide:bell" width="22" height="22" class="text-foreground"></iconify-icon>
+                    <div class="absolute top-3 right-3 w-2.5 h-2.5 bg-destructive rounded-full border-2 border-card"></div>
+                </div>
             </div>
         </header>
 
         <!-- Scrollable Content -->
-        <main class="flex-1 overflow-y-auto no-scrollbar px-6 pb-40">
+        <main class="flex-1 overflow-y-auto no-scrollbar px-6 pb-24">
 
             <!-- Pregnancy Progress Card -->
             <div class="mt-4 bg-card rounded-[2.5rem] p-8 shadow-[0_12px_40px_rgb(0,0,0,0.04)] border border-border/30 flex flex-col items-center anim-in anim-d1">
@@ -50,9 +59,9 @@
                         <circle cx="100" cy="100" r="84" fill="none" stroke="url(#grad)" stroke-width="14" stroke-linecap="round" stroke-dasharray="527.78" stroke-dashoffset="211.18" transform="rotate(-90 100 100)" />
                     </svg>
                     <div class="flex flex-col items-center justify-center relative z-10 pt-2">
-                        <span class="text-xs font-semibold text-muted-foreground uppercase tracking-[0.2em] mb-1">Trimester 2</span>
-                        <span class="text-6xl font-extrabold text-foreground font-heading tracking-tighter">24</span>
-                        <span class="text-sm font-medium text-primary mt-1 bg-primary/10 px-3 py-1 rounded-full">Week</span>
+                        <span class="text-xs font-semibold text-muted-foreground uppercase tracking-[0.2em] mb-1">{{ __('dashboard.trimester', ['number' => $user['trimester'] ?? 2]) }}</span>
+                        <span class="text-6xl font-extrabold text-foreground font-heading tracking-tighter">{{ $user['week'] ?? 24 }}</span>
+                        <span class="text-sm font-medium text-primary mt-1 bg-primary/10 px-3 py-1 rounded-full">{{ __('dashboard.week') }}</span>
                     </div>
                 </div>
                 <div class="mt-8 px-2 flex items-center gap-3">
@@ -60,24 +69,24 @@
                         <span class="text-xl">🌽</span>
                     </div>
                     <p class="text-[15px] leading-relaxed text-muted-foreground">
-                        Baby is about the size of an <span class="text-foreground font-semibold">ear of corn</span>, weighing around 1.3 pounds.
+                        {{ __('dashboard.baby_size', ['item' => __('dashboard.baby_size_corn'), 'weight' => __('dashboard.baby_weight')]) }}
                     </p>
                 </div>
             </div>
 
             <!-- Start AI Check-up -->
             <div class="mt-8 anim-in anim-d2">
-                <button class="w-full bg-primary text-primary-foreground rounded-full py-5 px-6 flex items-center justify-center gap-3 shadow-[0_16px_32px_-12px_rgba(167,139,250,0.6)] active:scale-[0.97]">
+                <a href="{{ route('telegram.webapp.vitals') }}" class="block w-full bg-primary text-primary-foreground rounded-full py-5 px-6 flex items-center justify-center gap-3 shadow-[0_16px_32px_-12px_rgba(167,139,250,0.6)] active:scale-[0.97]">
                     <iconify-icon icon="lucide:sparkles" width="22" height="22"></iconify-icon>
-                    <span class="text-[17px] font-semibold tracking-wide">Start AI Check-up</span>
-                </button>
+                    <span class="text-[17px] font-semibold tracking-wide">{{ __('dashboard.start_ai_checkup') }}</span>
+                </a>
             </div>
 
             <!-- Daily Meds Checklist -->
             <div class="mt-10 anim-in anim-d3">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold font-heading text-foreground">Daily Meds</h2>
-                    <span class="text-xs font-bold text-primary uppercase tracking-widest" id="medCounter">0 / 4</span>
+                    <h2 class="text-xl font-bold font-heading text-foreground">{{ __('dashboard.daily_meds') }}</h2>
+                    <span class="text-xs font-bold text-primary uppercase tracking-widest" id="medCounter">{{ __('dashboard.med_counter', ['completed' => 0, 'total' => 4]) }}</span>
                 </div>
                 <div class="bg-card rounded-[2rem] p-6 shadow-[0_8px_24px_rgb(0,0,0,0.03)] border border-border/20 space-y-4">
                     <div class="flex items-center gap-4">
@@ -88,8 +97,8 @@
                             </div>
                             <div class="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center text-lg">💊</div>
                             <div class="flex-1">
-                                <p class="med-name text-[15px] font-semibold text-foreground transition-all">Prenatal Vitamin</p>
-                                <p class="text-xs text-muted-foreground">1 tablet — Morning</p>
+                                <p class="med-name text-[15px] font-semibold text-foreground transition-all">{{ __('dashboard.prenatal_vitamin') }}</p>
+                                <p class="text-xs text-muted-foreground">{{ __('dashboard.prenatal_vitamin_dose') }}</p>
                             </div>
                         </label>
                     </div>
@@ -101,8 +110,8 @@
                             </div>
                             <div class="w-9 h-9 rounded-xl bg-accent/30 flex items-center justify-center text-lg">🟢</div>
                             <div class="flex-1">
-                                <p class="med-name text-[15px] font-semibold text-foreground transition-all">Iron Supplement</p>
-                                <p class="text-xs text-muted-foreground">1 tablet — Lunch</p>
+                                <p class="med-name text-[15px] font-semibold text-foreground transition-all">{{ __('dashboard.iron_supplement') }}</p>
+                                <p class="text-xs text-muted-foreground">{{ __('dashboard.iron_supplement_dose') }}</p>
                             </div>
                         </label>
                     </div>
@@ -114,8 +123,8 @@
                             </div>
                             <div class="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center text-lg">🐟</div>
                             <div class="flex-1">
-                                <p class="med-name text-[15px] font-semibold text-foreground transition-all">Omega-3 (DHA)</p>
-                                <p class="text-xs text-muted-foreground">1 capsule — Evening</p>
+                                <p class="med-name text-[15px] font-semibold text-foreground transition-all">{{ __('dashboard.omega_3') }}</p>
+                                <p class="text-xs text-muted-foreground">{{ __('dashboard.omega_3_dose') }}</p>
                             </div>
                         </label>
                     </div>
@@ -127,8 +136,8 @@
                             </div>
                             <div class="w-9 h-9 rounded-xl bg-[#FDE047]/30 flex items-center justify-center text-lg">☀️</div>
                             <div class="flex-1">
-                                <p class="med-name text-[15px] font-semibold text-foreground transition-all">Vitamin D3</p>
-                                <p class="text-xs text-muted-foreground">1000 IU — Morning</p>
+                                <p class="med-name text-[15px] font-semibold text-foreground transition-all">{{ __('dashboard.vitamin_d3') }}</p>
+                                <p class="text-xs text-muted-foreground">{{ __('dashboard.vitamin_d3_dose') }}</p>
                             </div>
                         </label>
                     </div>
@@ -138,8 +147,8 @@
             <!-- Kick Counter Quick Widget -->
             <div class="mt-8 anim-in anim-d4">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold font-heading text-foreground">Kick Counter</h2>
-                    <span class="text-xs font-bold text-accent-foreground bg-accent/20 px-3 py-1 rounded-full uppercase tracking-widest">Quick</span>
+                    <h2 class="text-xl font-bold font-heading text-foreground">{{ __('dashboard.kick_counter') }}</h2>
+                    <span class="text-xs font-bold text-accent-foreground bg-accent/20 px-3 py-1 rounded-full uppercase tracking-widest">{{ __('dashboard.quick') }}</span>
                 </div>
                 <div class="bg-card rounded-[2rem] p-6 shadow-[0_8px_24px_rgb(0,0,0,0.03)] border border-border/20 flex items-center justify-between">
                     <div class="flex items-center gap-4">
@@ -148,7 +157,7 @@
                         </div>
                         <div>
                             <p class="text-3xl font-extrabold font-heading text-foreground" id="quickKickNum">0</p>
-                            <p class="text-xs text-muted-foreground font-medium">kicks today</p>
+                            <p class="text-xs text-muted-foreground font-medium">{{ __('dashboard.kicks_today') }}</p>
                         </div>
                     </div>
                     <button data-kick-button class="w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center shadow-[0_8px_20px_-4px_rgba(167,139,250,0.5)] active:scale-90 transition-transform">
@@ -159,7 +168,7 @@
 
             <!-- Daily Tips -->
             <div class="mt-10 mb-2 flex justify-between items-center anim-in anim-d5">
-                <h2 class="text-xl font-bold font-heading text-foreground">Daily Tips</h2>
+                <h2 class="text-xl font-bold font-heading text-foreground">{{ __('dashboard.daily_tips') }}</h2>
             </div>
             <div class="flex gap-4 overflow-x-auto no-scrollbar -mx-6 px-6 pb-6 pt-2 anim-in anim-d5">
                 <div class="flex-shrink-0 w-64 bg-card rounded-[2rem] p-6 shadow-[0_8px_24px_rgb(0,0,0,0.03)] border border-border/20 flex flex-col gap-4">
@@ -167,8 +176,8 @@
                         <iconify-icon icon="lucide:droplets" width="24" height="24"></iconify-icon>
                     </div>
                     <div>
-                        <h3 class="text-foreground font-semibold text-lg mb-1">Hydration Goal</h3>
-                        <p class="text-muted-foreground text-sm leading-relaxed">Aim for 10 cups of water today. Extra fluids help form amniotic fluid.</p>
+                        <h3 class="text-foreground font-semibold text-lg mb-1">{{ __('dashboard.hydration_goal') }}</h3>
+                        <p class="text-muted-foreground text-sm leading-relaxed">{{ __('dashboard.hydration_desc') }}</p>
                     </div>
                 </div>
                 <div class="flex-shrink-0 w-64 bg-card rounded-[2rem] p-6 shadow-[0_8px_24px_rgb(0,0,0,0.03)] border border-border/20 flex flex-col gap-4">
@@ -176,8 +185,8 @@
                         <iconify-icon icon="lucide:activity" width="24" height="24"></iconify-icon>
                     </div>
                     <div>
-                        <h3 class="text-foreground font-semibold text-lg mb-1">Gentle Movement</h3>
-                        <p class="text-muted-foreground text-sm leading-relaxed">A 15-minute afternoon walk can help ease round ligament pains.</p>
+                        <h3 class="text-foreground font-semibold text-lg mb-1">{{ __('dashboard.gentle_movement') }}</h3>
+                        <p class="text-muted-foreground text-sm leading-relaxed">{{ __('dashboard.gentle_movement_desc') }}</p>
                     </div>
                 </div>
                 <div class="flex-shrink-0 w-64 bg-card rounded-[2rem] p-6 shadow-[0_8px_24px_rgb(0,0,0,0.03)] border border-border/20 flex flex-col gap-4">
@@ -185,8 +194,8 @@
                         <iconify-icon icon="lucide:moon" width="24" height="24"></iconify-icon>
                     </div>
                     <div>
-                        <h3 class="text-foreground font-semibold text-lg mb-1">Sleep Position</h3>
-                        <p class="text-muted-foreground text-sm leading-relaxed">Left-side sleeping improves blood flow to your baby during 2nd trimester.</p>
+                        <h3 class="text-foreground font-semibold text-lg mb-1">{{ __('dashboard.sleep_position') }}</h3>
+                        <p class="text-muted-foreground text-sm leading-relaxed">{{ __('dashboard.sleep_position_desc') }}</p>
                     </div>
                 </div>
             </div>

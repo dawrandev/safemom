@@ -6,8 +6,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Language switching route
+Route::get('/lang/{locale}', [App\Http\Controllers\TelegramWebAppController::class, 'setLanguage'])->name('setLanguage');
+
 // Telegram Web App Routes
-Route::prefix('telegram/webapp')->group(function () {
+Route::prefix('telegram/webapp')->middleware('setlocale')->group(function () {
     // Routes WITHOUT authentication - simple access
     Route::get('/dashboard', [App\Http\Controllers\TelegramWebAppController::class, 'dashboard'])->name('telegram.webapp.dashboard');
     Route::get('/vitals', [App\Http\Controllers\TelegramWebAppController::class, 'vitals'])->name('telegram.webapp.vitals');

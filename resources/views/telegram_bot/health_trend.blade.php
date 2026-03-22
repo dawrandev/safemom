@@ -1,12 +1,19 @@
 @extends('telegram_bot.layouts.webapp')
 
-@section('title', 'Health Trends - MamaCare')
+@section('title', 'Health Trends - SafeMom')
 
 @push('styles')
 @vite('resources/css/telegram_bot/health_trend.css')
 @endpush
 
 @push('scripts')
+<script>
+    window.translations = {
+        bloodPressure: "{{ __('health_trend.blood_pressure') }}",
+        weight: "{{ __('health_trend.weight') }}",
+        exportPdf: "{{ __('health_trend.export_pdf') }}"
+    };
+</script>
 @vite('resources/js/telegram_bot/health_trend.js')
 @endpush
 
@@ -14,47 +21,48 @@
     <div class="flex flex-col h-screen bg-background overflow-hidden relative">
 
         <!-- Header -->
-        <header class="flex justify-between items-end px-6 pt-14 pb-4 shrink-0">
+        <header class="flex justify-between items-end px-6 pt-6 pb-3 shrink-0">
             <div class="flex flex-col gap-1">
                 <a href="{{ route('telegram.webapp.dashboard') }}" class="flex items-center gap-2">
                     <button class="w-10 h-10 flex items-center justify-center bg-card rounded-xl shadow-sm border border-border/40">
                         <iconify-icon icon="lucide:chevron-left" width="20" height="20" class="text-foreground"></iconify-icon>
                     </button>
-                    <span class="text-sm font-medium text-muted-foreground">Back</span>
+                    <span class="text-sm font-medium text-muted-foreground">{{ __('common.back') }}</span>
                 </a>
-                <h1 class="text-3xl font-bold font-heading tracking-tight text-foreground mt-2">Health Trends</h1>
+                <h1 class="text-3xl font-bold font-heading tracking-tight text-foreground mt-2">{{ __('health_trend.health_trends') }}</h1>
             </div>
+            @include('telegram_bot.components.language-switcher')
         </header>
 
-        <main class="flex-1 overflow-y-auto no-scrollbar px-6 pb-40">
+        <main class="flex-1 overflow-y-auto no-scrollbar px-6 pb-24">
 
             <!-- Export PDF Button -->
             <div class="mt-4 anim-in">
                 <button onclick="exportPDF(this)" class="w-full bg-card border border-border/40 rounded-full py-4 px-6 flex items-center justify-center gap-3 shadow-[0_4px_16px_rgb(0,0,0,0.03)] active:scale-[0.97]">
                     <iconify-icon icon="lucide:file-text" width="22" height="22" class="text-primary"></iconify-icon>
-                    <span class="text-[16px] font-semibold tracking-wide text-foreground">Export Monthly PDF Report</span>
+                    <span class="text-[16px] font-semibold tracking-wide text-foreground">{{ __('health_trend.export_pdf') }}</span>
                 </button>
             </div>
 
             <!-- Chart Tabs -->
             <div class="mt-8 flex gap-6 border-b border-border/40 anim-in" style="animation-delay:.05s">
-                <button onclick="showChart('bp')" class="tab-btn pb-3 text-sm font-bold tab-active" id="tabBP">Blood Pressure</button>
-                <button onclick="showChart('weight')" class="tab-btn pb-3 text-sm font-bold text-muted-foreground" id="tabWeight">Weight</button>
+                <button onclick="showChart('bp')" class="tab-btn pb-3 text-sm font-bold tab-active" id="tabBP">{{ __('health_trend.blood_pressure') }}</button>
+                <button onclick="showChart('weight')" class="tab-btn pb-3 text-sm font-bold text-muted-foreground" id="tabWeight">{{ __('health_trend.weight') }}</button>
             </div>
 
             <!-- Blood Pressure Chart -->
             <div class="mt-6 bg-card rounded-[2.5rem] p-6 shadow-[0_12px_40px_rgb(0,0,0,0.04)] border border-border/30 anim-in" style="animation-delay:.1s" id="chartBP">
                 <div class="flex justify-between items-center mb-6">
                     <div>
-                        <p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Systolic / Diastolic</p>
-                        <p class="text-2xl font-extrabold font-heading text-foreground mt-1">Last 7 Days</p>
+                        <p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{{ __('health_trend.systolic_diastolic') }}</p>
+                        <p class="text-2xl font-extrabold font-heading text-foreground mt-1">{{ __('health_trend.last_7_days') }}</p>
                     </div>
                     <div class="flex items-center gap-4 text-xs font-semibold">
                         <div class="flex items-center gap-1">
-                            <div class="w-3 h-3 rounded-full bg-primary"></div>Systolic
+                            <div class="w-3 h-3 rounded-full bg-primary"></div>{{ __('vitals.systolic') }}
                         </div>
                         <div class="flex items-center gap-1">
-                            <div class="w-3 h-3 rounded-full bg-accent"></div>Diastolic
+                            <div class="w-3 h-3 rounded-full bg-accent"></div>{{ __('vitals.diastolic') }}
                         </div>
                     </div>
                 </div>
@@ -109,8 +117,8 @@
             <div class="mt-6 bg-card rounded-[2.5rem] p-6 shadow-[0_12px_40px_rgb(0,0,0,0.04)] border border-border/30 hidden" id="chartWeight">
                 <div class="flex justify-between items-center mb-6">
                     <div>
-                        <p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Weight Trend</p>
-                        <p class="text-2xl font-extrabold font-heading text-foreground mt-1">Weeks 18–24</p>
+                        <p class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{{ __('health_trend.weight_trend') }}</p>
+                        <p class="text-2xl font-extrabold font-heading text-foreground mt-1">{{ __('health_trend.weeks_range', ['start' => __('health_trend.weeks_start'), 'end' => __('health_trend.weeks_end')]) }}</p>
                     </div>
                     <div class="flex items-center gap-1 text-xs font-semibold">
                         <div class="w-3 h-3 rounded-full bg-primary"></div>lbs
@@ -151,29 +159,29 @@
                 </svg>
                 <div class="mt-4 flex items-center gap-3 bg-accent/10 p-4 rounded-2xl">
                     <iconify-icon icon="lucide:trending-up" width="20" height="20" class="text-accent-foreground"></iconify-icon>
-                    <p class="text-sm text-muted-foreground"><span class="font-bold text-foreground">+8 lbs</span> total gain — within healthy range for week 24</p>
+                    <p class="text-sm text-muted-foreground">{{ __('health_trend.weight_gain', ['amount' => 8, 'week' => 24]) }}</p>
                 </div>
             </div>
 
             <!-- History List -->
             <div class="mt-10 anim-in" style="animation-delay:.15s">
-                <h3 class="text-lg font-bold font-heading text-foreground mb-4">Past Analyses</h3>
+                <h3 class="text-lg font-bold font-heading text-foreground mb-4">{{ __('health_trend.past_analyses') }}</h3>
                 <div class="space-y-3">
                     <div class="bg-card rounded-[1.8rem] p-5 border border-border/20 shadow-sm flex justify-between items-center">
                         <div class="flex items-center gap-4">
                             <div class="w-11 h-11 rounded-[1rem] bg-accent/20 flex items-center justify-center"><iconify-icon icon="lucide:check-circle-2" width="20" height="20" class="text-accent-foreground"></iconify-icon></div>
                             <div>
-                                <p class="text-[15px] font-semibold text-foreground">All Clear</p>
+                                <p class="text-[15px] font-semibold text-foreground">{{ __('health_trend.all_clear') }}</p>
                                 <p class="text-xs text-muted-foreground">BP: 118/76 · HR: 72 · Temp: 98.4°F</p>
                             </div>
                         </div>
-                        <span class="text-xs font-bold text-muted-foreground">Today</span>
+                        <span class="text-xs font-bold text-muted-foreground">{{ __('common.today') }}</span>
                     </div>
                     <div class="bg-card rounded-[1.8rem] p-5 border border-border/20 shadow-sm flex justify-between items-center">
                         <div class="flex items-center gap-4">
                             <div class="w-11 h-11 rounded-[1rem] bg-secondary/30 flex items-center justify-center"><iconify-icon icon="lucide:alert-triangle" width="20" height="20" class="text-secondary-foreground"></iconify-icon></div>
                             <div>
-                                <p class="text-[15px] font-semibold text-foreground">Monitor</p>
+                                <p class="text-[15px] font-semibold text-foreground">{{ __('health_trend.monitor') }}</p>
                                 <p class="text-xs text-muted-foreground">BP: 132/86 · HR: 88 · Temp: 98.8°F</p>
                             </div>
                         </div>
@@ -183,7 +191,7 @@
                         <div class="flex items-center gap-4">
                             <div class="w-11 h-11 rounded-[1rem] bg-accent/20 flex items-center justify-center"><iconify-icon icon="lucide:check-circle-2" width="20" height="20" class="text-accent-foreground"></iconify-icon></div>
                             <div>
-                                <p class="text-[15px] font-semibold text-foreground">All Clear</p>
+                                <p class="text-[15px] font-semibold text-foreground">{{ __('health_trend.all_clear') }}</p>
                                 <p class="text-xs text-muted-foreground">BP: 115/74 · HR: 70 · Temp: 98.2°F</p>
                             </div>
                         </div>
@@ -193,7 +201,7 @@
                         <div class="flex items-center gap-4">
                             <div class="w-11 h-11 rounded-[1rem] bg-accent/20 flex items-center justify-center"><iconify-icon icon="lucide:check-circle-2" width="20" height="20" class="text-accent-foreground"></iconify-icon></div>
                             <div>
-                                <p class="text-[15px] font-semibold text-foreground">All Clear</p>
+                                <p class="text-[15px] font-semibold text-foreground">{{ __('health_trend.all_clear') }}</p>
                                 <p class="text-xs text-muted-foreground">BP: 120/78 · HR: 74 · Temp: 98.6°F</p>
                             </div>
                         </div>
@@ -203,7 +211,7 @@
                         <div class="flex items-center gap-4">
                             <div class="w-11 h-11 rounded-[1rem] bg-destructive/20 flex items-center justify-center"><iconify-icon icon="lucide:alert-circle" width="20" height="20" class="text-destructive"></iconify-icon></div>
                             <div>
-                                <p class="text-[15px] font-semibold text-foreground">Alert</p>
+                                <p class="text-[15px] font-semibold text-foreground">{{ __('health_trend.alert') }}</p>
                                 <p class="text-xs text-muted-foreground">BP: 142/91 · HR: 95 · Temp: 100.2°F</p>
                             </div>
                         </div>
