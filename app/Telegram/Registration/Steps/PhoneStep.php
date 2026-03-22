@@ -140,7 +140,12 @@ class PhoneStep
      */
     protected function showSuccessMessage($chatId, $name)
     {
-        $webAppUrl = env('TELEGRAM_WEB_APP_URL', 'https://your-webapp-url.com');
+        $webAppUrl = config('telegram.bots.mybot.web_app_url');
+
+        // If not configured, use default
+        if (!$webAppUrl) {
+            $webAppUrl = config('app.url') . '/telegram/webapp/dashboard';
+        }
 
         $keyboard = Keyboard::make([
             'inline_keyboard' => [
@@ -158,19 +163,6 @@ class PhoneStep
             'text' => "🎉 <b>Tabriklaymiz, {$name}!</b>\n\nSiz muvaffaqiyatli ro'yxatdan o'tdingiz!\n\nEndi ilovani ochish uchun quyidagi tugmani bosing:",
             'parse_mode' => 'HTML',
             'reply_markup' => $keyboard
-        ]);
-
-        // Remove keyboard
-        Telegram::sendMessage([
-            'chat_id' => $chatId,
-            'text' => '.',
-            'reply_markup' => Keyboard::remove()
-        ]);
-
-        // Delete the dot message immediately
-        Telegram::deleteMessage([
-            'chat_id' => $chatId,
-            'message_id' => $chatId + 1
         ]);
     }
 }

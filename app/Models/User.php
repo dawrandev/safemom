@@ -64,4 +64,76 @@ class User extends Authenticatable
     {
         return $this->hasMany(User::class, 'doctor_id');
     }
+
+    /**
+     * Get the user's profile
+     */
+    public function profile()
+    {
+        return $this->hasOne(Profile::class);
+    }
+
+    /**
+     * Get all vital signs for the user
+     */
+    public function vitals()
+    {
+        return $this->hasMany(Vital::class);
+    }
+
+    /**
+     * Get all AI diagnoses for the user
+     */
+    public function aiDiagnoses()
+    {
+        return $this->hasMany(AiDiagnosis::class);
+    }
+
+    /**
+     * Get all kick count sessions for the user
+     */
+    public function kickCounts()
+    {
+        return $this->hasMany(KickCount::class);
+    }
+
+    /**
+     * Get all medications for the user
+     */
+    public function medications()
+    {
+        return $this->hasMany(Medication::class);
+    }
+
+    /**
+     * Get all messages sent by the user
+     */
+    public function sentMessages()
+    {
+        return $this->hasMany(Chat::class, 'sender_id');
+    }
+
+    /**
+     * Get all messages received by the user
+     */
+    public function receivedMessages()
+    {
+        return $this->hasMany(Chat::class, 'receiver_id');
+    }
+
+    /**
+     * Get all doctor notes written by the user (if doctor)
+     */
+    public function doctorNotesWritten()
+    {
+        return $this->hasMany(DoctorNote::class, 'doctor_id');
+    }
+
+    /**
+     * Get all doctor notes about the user (if patient)
+     */
+    public function doctorNotesReceived()
+    {
+        return $this->hasMany(DoctorNote::class, 'patient_id');
+    }
 }

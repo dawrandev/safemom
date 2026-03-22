@@ -47,8 +47,14 @@ class StartCommand extends Command
         $telegramId = (string) $this->getUpdate()->getMessage()->getFrom()->getId();
         $firstName = $this->getUpdate()->getMessage()->getFrom()->getFirstName();
 
-        // Show Web App button directly (no registration needed)
-        $this->showWebAppButton($chatId, $firstName);
+        // Check if user is registered
+        if ($this->registrationService->isRegistered($telegramId)) {
+            // User is registered - show Web App button
+            $this->showWebAppButton($chatId, $firstName);
+        } else {
+            // User is not registered - show registration button
+            $this->showRegistrationButton($chatId, $firstName);
+        }
     }
 
     /**
