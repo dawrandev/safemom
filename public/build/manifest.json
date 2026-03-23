@@ -1,10 +1,10 @@
 {
-  "_telegram-init-COMxwxKX.js": {
-    "file": "assets/telegram-init-COMxwxKX.js",
+  "_telegram-init-DWhmDabg.js": {
+    "file": "assets/telegram-init-DWhmDabg.js",
     "name": "telegram-init"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BY8K1kdm.css",
+    "file": "assets/app-DDCCHL9R.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -50,48 +50,48 @@
     "isEntry": true
   },
   "resources/js/telegram_bot/community_support.js": {
-    "file": "assets/community_support-Dq9Qut25.js",
+    "file": "assets/community_support-D80CZRIe.js",
     "name": "community_support",
     "src": "resources/js/telegram_bot/community_support.js",
     "isEntry": true,
     "imports": [
-      "_telegram-init-COMxwxKX.js"
+      "_telegram-init-DWhmDabg.js"
     ]
   },
   "resources/js/telegram_bot/dashboard.js": {
-    "file": "assets/dashboard-9dJd_dfU.js",
+    "file": "assets/dashboard-GgWoZFFV.js",
     "name": "dashboard",
     "src": "resources/js/telegram_bot/dashboard.js",
     "isEntry": true,
     "imports": [
-      "_telegram-init-COMxwxKX.js"
+      "_telegram-init-DWhmDabg.js"
     ]
   },
   "resources/js/telegram_bot/health_trend.js": {
-    "file": "assets/health_trend-Ctzh74BT.js",
+    "file": "assets/health_trend-CI2gK975.js",
     "name": "health_trend",
     "src": "resources/js/telegram_bot/health_trend.js",
     "isEntry": true,
     "imports": [
-      "_telegram-init-COMxwxKX.js"
+      "_telegram-init-DWhmDabg.js"
     ]
   },
   "resources/js/telegram_bot/monitoring.js": {
-    "file": "assets/monitoring-U0zZFazr.js",
+    "file": "assets/monitoring-Y7kFDlSd.js",
     "name": "monitoring",
     "src": "resources/js/telegram_bot/monitoring.js",
     "isEntry": true,
     "imports": [
-      "_telegram-init-COMxwxKX.js"
+      "_telegram-init-DWhmDabg.js"
     ]
   },
   "resources/js/telegram_bot/vitals.js": {
-    "file": "assets/vitals-Zrcz--pp.js",
+    "file": "assets/vitals-DFYOFoX0.js",
     "name": "vitals",
     "src": "resources/js/telegram_bot/vitals.js",
     "isEntry": true,
     "imports": [
-      "_telegram-init-COMxwxKX.js"
+      "_telegram-init-DWhmDabg.js"
     ]
   }
 }
