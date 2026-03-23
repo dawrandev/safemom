@@ -22,6 +22,7 @@ class StoreVitalsRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'locale' => 'nullable|in:uz,ru,en',
             'systolic_bp' => 'required|integer|min:60|max:250',
             'diastolic_bp' => 'required|integer|min:30|max:150',
             'heart_rate' => 'required|integer|min:40|max:200',

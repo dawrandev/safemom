@@ -15,6 +15,7 @@ class Profile extends Model
     protected $fillable = [
         'user_id',
         'age',
+        'height',
         'lmp_date',
         'current_weight',
         'blood_type',

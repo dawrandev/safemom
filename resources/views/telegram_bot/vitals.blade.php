@@ -9,6 +9,7 @@
 @push('scripts')
 <script>
     window.translations = {
+        currentLocale: "{{ app()->getLocale() }}",
         analyzing: "{{ __('common.analyzing') }}",
         allClearTitle: "{{ __('vitals.all_clear_title') }}",
         allClearDesc: "{{ __('vitals.all_clear_desc') }}",
@@ -82,6 +83,7 @@
                             'Accept': 'application/json'
                         },
                         body: JSON.stringify({
+                            locale: window.translations?.currentLocale || 'en',
                             systolic_bp: sys,
                             diastolic_bp: dia,
                             heart_rate: hr,

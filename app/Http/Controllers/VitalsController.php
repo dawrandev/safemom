@@ -23,7 +23,9 @@ class VitalsController extends Controller
     public function store(StoreVitalsRequest $request, DeepSeekService $deepSeekService): JsonResponse
     {
         $user = $request->user();
-        $locale = session('locale', 'en');
+        $locale = $request->input('locale')
+            ?: app()->getLocale()
+            ?: session('locale', 'en');
 
         try {
             $result = DB::transaction(function () use ($user, $request, $deepSeekService, $locale) {

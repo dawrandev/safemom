@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'telegram.webapp' => \App\Http\Middleware\ValidateTelegramWebApp::class,
             'setlocale' => \App\Http\Middleware\SetLocale::class,
             'auth.telegram' => \App\Http\Middleware\AuthenticateTelegram::class,
+            'profile.complete' => \App\Http\Middleware\EnsureProfileComplete::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -18,6 +18,8 @@ class DeepSeekService
      */
     public function analyzeVitals(Vital $vital, string $locale = 'en'): array
     {
+        $locale = in_array($locale, ['uz', 'ru', 'en'], true) ? $locale : 'en';
+
         $messages = [
             ['role' => 'system', 'content' => $this->getSystemPrompt($locale)],
             ['role' => 'user', 'content' => $this->buildUserMessage($vital, $locale)],
@@ -25,7 +27,7 @@ class DeepSeekService
 
         try {
             $response = $this->callApi($messages);
-            return $this->parseResponse($response['choices'][0]['message']['content']);
+            return $this->parseResponse($response['choices'][0]['message']['content'], $locale);
         } catch (\Exception $e) {
             Log::error('DeepSeek API call failed', [
                 'vital_id' => $vital->id,
@@ -98,7 +100,7 @@ class DeepSeekService
      * @param string $response
      * @return array
      */
-    protected function parseResponse(string $response): array
+    protected function parseResponse(string $response, string $locale): array
     {
         // Try to extract JSON from response
         $jsonPattern = '/\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}/';
@@ -116,7 +118,7 @@ class DeepSeekService
 
         // If parsing fails, return safe default
         Log::warning('Failed to parse DeepSeek response', ['response' => $response]);
-        return $this->getSafeDefault('en');
+        return $this->getSafeDefault($locale);
     }
 
     /**

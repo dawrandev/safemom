@@ -37,5 +37,14 @@
             </div>
             <span class="text-[11px] {{ request()->routeIs('telegram.webapp.health_trend') ? 'font-bold' : 'font-medium' }} tracking-wide">{{ __('nav.history') }}</span>
         </a>
+        <a href="{{ route('telegram.webapp.profile') }}" class="flex flex-col items-center gap-1.5 {{ request()->routeIs('telegram.webapp.profile') ? 'text-primary' : 'text-muted-foreground hover:text-primary' }} transition-colors">
+            <div class="relative flex items-center justify-center w-8 h-8">
+                @if(request()->routeIs('telegram.webapp.profile'))
+                    <div class="absolute inset-0 bg-primary/15 rounded-full scale-125"></div>
+                @endif
+                <iconify-icon icon="lucide:user-circle" width="24" height="24" class="relative z-10"></iconify-icon>
+            </div>
+            <span class="text-[11px] {{ request()->routeIs('telegram.webapp.profile') ? 'font-bold' : 'font-medium' }} tracking-wide">{{ __('nav.profile') }}</span>
+        </a>
     </div>
 </div>

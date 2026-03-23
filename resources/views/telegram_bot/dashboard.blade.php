@@ -169,61 +169,29 @@
             <div class="mt-10 anim-in anim-d3">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold font-heading text-foreground">{{ __('dashboard.daily_meds') }}</h2>
-                    <span class="text-xs font-bold text-primary uppercase tracking-widest" id="medCounter">{{ __('dashboard.med_counter', ['completed' => 0, 'total' => 4]) }}</span>
+                    <span class="text-xs font-bold text-primary uppercase tracking-widest" id="medCounter">{{ __('dashboard.med_counter', ['completed' => 0, 'total' => $medications->count()]) }}</span>
                 </div>
                 <div class="bg-card rounded-[2rem] p-6 shadow-[0_8px_24px_rgb(0,0,0,0.03)] border border-border/20 space-y-4">
+                    @forelse($medications as $index => $medication)
                     <div class="flex items-center gap-4">
-                        <input type="checkbox" id="med1" class="med-check hidden">
-                        <label for="med1" class="flex items-center gap-4 flex-1 cursor-pointer">
+                        <input type="checkbox" id="med{{ $medication->id }}" class="med-check hidden">
+                        <label for="med{{ $medication->id }}" class="flex items-center gap-4 flex-1 cursor-pointer">
                             <div class="check-box w-7 h-7 rounded-lg border-2 border-border flex items-center justify-center transition-all">
                                 <iconify-icon icon="lucide:check" width="16" height="16" class="text-white hidden"></iconify-icon>
                             </div>
                             <div class="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center text-lg">💊</div>
                             <div class="flex-1">
-                                <p class="med-name text-[15px] font-semibold text-foreground transition-all">{{ __('dashboard.prenatal_vitamin') }}</p>
-                                <p class="text-xs text-muted-foreground">{{ __('dashboard.prenatal_vitamin_dose') }}</p>
+                                <p class="med-name text-[15px] font-semibold text-foreground transition-all">{{ $medication->name }}</p>
+                                <p class="text-xs text-muted-foreground">{{ $medication->dosage ?? $medication->time_to_take }}</p>
                             </div>
                         </label>
                     </div>
-                    <div class="flex items-center gap-4">
-                        <input type="checkbox" id="med2" class="med-check hidden">
-                        <label for="med2" class="flex items-center gap-4 flex-1 cursor-pointer">
-                            <div class="check-box w-7 h-7 rounded-lg border-2 border-border flex items-center justify-center transition-all">
-                                <iconify-icon icon="lucide:check" width="16" height="16" class="text-white hidden"></iconify-icon>
-                            </div>
-                            <div class="w-9 h-9 rounded-xl bg-accent/30 flex items-center justify-center text-lg">🟢</div>
-                            <div class="flex-1">
-                                <p class="med-name text-[15px] font-semibold text-foreground transition-all">{{ __('dashboard.iron_supplement') }}</p>
-                                <p class="text-xs text-muted-foreground">{{ __('dashboard.iron_supplement_dose') }}</p>
-                            </div>
-                        </label>
+                    @empty
+                    <div class="text-center py-4">
+                        <p class="text-sm text-muted-foreground">{{ __('dashboard.no_medications') }}</p>
+                        <a href="{{ route('telegram.webapp.profile') }}" class="text-sm font-semibold text-primary mt-2 inline-block">{{ __('dashboard.add_medications') }}</a>
                     </div>
-                    <div class="flex items-center gap-4">
-                        <input type="checkbox" id="med3" class="med-check hidden">
-                        <label for="med3" class="flex items-center gap-4 flex-1 cursor-pointer">
-                            <div class="check-box w-7 h-7 rounded-lg border-2 border-border flex items-center justify-center transition-all">
-                                <iconify-icon icon="lucide:check" width="16" height="16" class="text-white hidden"></iconify-icon>
-                            </div>
-                            <div class="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center text-lg">🐟</div>
-                            <div class="flex-1">
-                                <p class="med-name text-[15px] font-semibold text-foreground transition-all">{{ __('dashboard.omega_3') }}</p>
-                                <p class="text-xs text-muted-foreground">{{ __('dashboard.omega_3_dose') }}</p>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <input type="checkbox" id="med4" class="med-check hidden">
-                        <label for="med4" class="flex items-center gap-4 flex-1 cursor-pointer">
-                            <div class="check-box w-7 h-7 rounded-lg border-2 border-border flex items-center justify-center transition-all">
-                                <iconify-icon icon="lucide:check" width="16" height="16" class="text-white hidden"></iconify-icon>
-                            </div>
-                            <div class="w-9 h-9 rounded-xl bg-[#FDE047]/30 flex items-center justify-center text-lg">☀️</div>
-                            <div class="flex-1">
-                                <p class="med-name text-[15px] font-semibold text-foreground transition-all">{{ __('dashboard.vitamin_d3') }}</p>
-                                <p class="text-xs text-muted-foreground">{{ __('dashboard.vitamin_d3_dose') }}</p>
-                            </div>
-                        </label>
-                    </div>
+                    @endforelse
                 </div>
             </div>
 

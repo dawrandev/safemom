@@ -51,6 +51,7 @@ async function analyzeVitals() {
                 ...(telegramInitData ? { 'X-Telegram-Init-Data': telegramInitData } : {}),
             },
             body: JSON.stringify({
+                locale: window.translations?.currentLocale || document.documentElement.lang || 'en',
                 systolic_bp: sys,
                 diastolic_bp: dia,
                 heart_rate: hr,

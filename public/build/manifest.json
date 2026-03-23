@@ -4,7 +4,7 @@
     "name": "telegram-init"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DDCCHL9R.css",
+    "file": "assets/app-B1QnNZYe.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -86,7 +86,7 @@
     ]
   },
   "resources/js/telegram_bot/vitals.js": {
-    "file": "assets/vitals-DFYOFoX0.js",
+    "file": "assets/vitals-xodZecze.js",
     "name": "vitals",
     "src": "resources/js/telegram_bot/vitals.js",
     "isEntry": true,
